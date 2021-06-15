@@ -1,4 +1,4 @@
-name: stactools-package
+name: stactools-gap
 channels:
   - conda-forge
   - defaults

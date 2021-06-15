@@ -1,7 +1,7 @@
-FROM stactools-package:latest
+FROM stactools-gap:latest
 
 RUN conda install -c conda-forge pandoc
 
-COPY . /src/stactools-package
-RUN pip install -r /src/stactools-package/requirements-dev.txt
-WORKDIR /src/stactools-package
+COPY . /src/stactools-gap
+RUN pip install -r /src/stactools-gap/requirements-dev.txt
+WORKDIR /src/stactools-gap

@@ -1,10 +1,10 @@
-# stactools-package
+# stactools-gap
 
 Template repostitory for [stactools](https://github.com/stac-utils/stactools) packages.
 
 ## How to use
 
-1. Clone this repository and name it `stactools-{NAME}`, where `NAME` is your package name.
+1. Clone this repository and name it `{NAME}`, where `NAME` is your package name.
    This name should be short, memorable, and a valid Python package name (i.e. it shouldn't start with a number, etc).
 2. Update `setup.cfg` with your package name, description, and such.
 3. Rename `src/stactools/package` to `src/stactools/{NAME}`.
