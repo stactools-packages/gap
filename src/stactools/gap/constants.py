@@ -1,1 +1,1 @@
-DEFAULT_TILE_SIZE = 100000  # meters
+DEFAULT_TILE_SIZE = 300000  # meters
