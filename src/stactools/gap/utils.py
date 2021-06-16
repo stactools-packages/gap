@@ -38,10 +38,8 @@ class Tile:
     def subset(self, infile, outdir):
         base = os.path.splitext(os.path.basename(infile))[0]
         outfile = os.path.join(
-            outdir,
-            (f"{base}_{str(int(self._left))}_{str(int(self._top))}_"
-             f"{str(int(self._right))}_{str(int(self._bottom))}.tif")
-        )
+            outdir, (f"{base}_{str(int(self._left))}_{str(int(self._top))}_"
+                     f"{str(int(self._right))}_{str(int(self._bottom))}.tif"))
         extra_args = [
             "-projwin",
             str(self._left),
