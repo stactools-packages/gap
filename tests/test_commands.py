@@ -1,6 +1,7 @@
 import os.path
 from tempfile import TemporaryDirectory
 
+import pystac
 import rasterio
 
 from stactools.gap.commands import create_gap_command
@@ -29,3 +30,24 @@ class CommandsTest(CliTestCase):
                     rows, cols = data.shape
                     self.assertLessEqual(rows, 500001)
                     self.assertLessEqual(cols, 500001)
+
+    def test_collection(self):
+        infile = test_data.get_path(
+            "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
+        )
+        with TemporaryDirectory() as directory:
+            cog_directory = os.path.join(directory, "cogs")
+            stac_directory = os.path.join(directory, "stac")
+            result = self.run_command([
+                "gap", "create-collection", "--tile-size", "500001", infile,
+                cog_directory, stac_directory
+            ])
+            self.assertEqual(result.exit_code,
+                             0,
+                             msg="\n{}".format(result.output))
+            collection_path = os.path.join(stac_directory, "collection.json")
+            collection = pystac.read_file(collection_path)
+            self.assertEqual(
+                collection.id,
+                "gap_landfire_nationalterrestrialecosystems2011_subset")
+            collection.validate_all()
