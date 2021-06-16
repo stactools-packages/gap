@@ -1,6 +1,7 @@
 import click
 
-from stactools.gap.utils import tile_to_mgrs_grid
+from stactools.gap.constants import DEFAULT_TILE_SIZE
+from stactools.gap.utils import tile
 
 
 def create_gap_command(cli):
@@ -9,12 +10,13 @@ def create_gap_command(cli):
     def gap():
         pass
 
-    @gap.command("tile", help="Tiles the input COG to an MGRS grid")
+    @gap.command("tile", help="Tiles the input COG to a grid")
     @click.argument("infile")
     @click.argument("outdir")
-    def tile_command(infile, outdir):
+    @click.option("-s", "--size", default=DEFAULT_TILE_SIZE)
+    def tile_command(infile, outdir, size):
         """Tiles the input file to the MGRS grid.
 
         The source GAP data are huge GeoTIFFS, so we tile the geotiffs to the MGRS grid.
         """
-        tile_to_mgrs_grid(infile, outdir)
+        tile(infile, outdir, size)

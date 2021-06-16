@@ -1,24 +1,52 @@
-import mgrs
+import os.path
+
 import rasterio
-from pyproj import CRS, Transformer
+
+from stactools.core.utils.convert import cogify
+from stactools.gap.constants import DEFAULT_TILE_SIZE
 
 
-def tile_to_mgrs_grid(infile, outdir):
+def tile(infile, outdir, size=DEFAULT_TILE_SIZE):
     """Tiles the given input to the MGRS grid."""
-    wgs84 = CRS.from_epsg(4326)
     with rasterio.open(infile) as dataset:
-        transformer = Transformer.from_crs(dataset.crs, wgs84, always_xy=True)
-        bounds = transformer.transform_bounds(*dataset.bounds)
-        print(bounds)
-        for tile in mgrs_tiles(*bounds):
-            Tile.subset(dataset, outdir)
+        tiles = create_tiles(*dataset.bounds, size)
+    for tile in tiles:
+        tile.subset(infile, outdir)
 
 
-def mgrs_tiles(left, bottom, right, top):
-    m = mgrs.MGRS()
-    print(m.toMGRS(bottom, left))
-    return []
+def create_tiles(left, bottom, right, top, size):
+    x = left
+    y = bottom
+    tiles = []
+    while x < right:
+        while y < top:
+            tile = Tile(x, y, min(x + size, right), min(y + size, top))
+            tiles.append(tile)
+            y += size
+        x += size
+        y = bottom
+    return tiles
 
 
 class Tile:
-    pass
+    def __init__(self, left, bottom, right, top):
+        self._left = left
+        self._bottom = bottom
+        self._right = right
+        self._top = top
+
+    def subset(self, infile, outdir):
+        base = os.path.splitext(os.path.basename(infile))[0]
+        outfile = os.path.join(
+            outdir,
+            (f"{base}_{str(int(self._left))}_{str(int(self._top))}_"
+             f"{str(int(self._right))}_{str(int(self._bottom))}.tif")
+        )
+        extra_args = [
+            "-projwin",
+            str(self._left),
+            str(self._top),
+            str(self._right),
+            str(self._bottom)
+        ]
+        return cogify(infile, outfile, extra_args=extra_args)

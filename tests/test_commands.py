@@ -3,6 +3,7 @@ from tempfile import TemporaryDirectory
 
 from stactools.gap.commands import create_gap_command
 from stactools.testing import CliTestCase
+from stactools.testing.validate_cloud_optimized_geotiff import validate
 from tests import test_data
 
 
@@ -15,10 +16,14 @@ class CommandsTest(CliTestCase):
             "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
         )
         with TemporaryDirectory() as directory:
-            result = self.run_command(["gap", "tile", infile, directory])
+            result = self.run_command(
+                ["gap", "tile", "--size", "500001", infile, directory])
             self.assertEqual(result.exit_code,
                              0,
                              msg="\n{}".format(result.output))
-            for file in os.listdir(directory):
-                print(file)
-        self.assertTrue(False)
+            for path in (os.path.join(directory, file)
+                         for file in os.listdir(directory)):
+                warnings, errors, details = validate(path, full_check=True)
+                # why doesn't python have a `.is_empty()` method?
+                self.assertFalse(warnings, warnings)
+                self.assertFalse(errors, errors)
