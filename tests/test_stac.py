@@ -1,15 +1,14 @@
 import datetime
-import math
-import unittest
 
 from pystac.extensions.projection import ProjectionExtension
 from pyproj import CRS
 
 from stactools.gap.stac import create_item
 from tests import test_data
+from tests.utils import StactoolsTestCase
 
 
-class StacTest(unittest.TestCase):
+class StacTest(StactoolsTestCase):
     def test_create_item(self):
         infile = test_data.get_path(
             "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
@@ -58,10 +57,7 @@ class StacTest(unittest.TestCase):
             -110.00025443243528, 29.359168172694346, -99.94710283198935,
             40.69658382856684
         ]
-        for actual, expected in zip(item.bbox, expected_bbox):
-            self.assertTrue(math.isclose(actual, expected, abs_tol=1e-4), (
-                f"Bounding boxes are not close enough: {actual} != {expected} "
-                f"(comparing {item.bbox} and {expected_bbox})"))
+        self.assertListsAreClose(item.bbox, expected_bbox, 1e-4)
         self.assertTrue(ProjectionExtension.has_extension(item))
         projection = ProjectionExtension.ext(item)
         self.assertIsNone(projection.epsg)

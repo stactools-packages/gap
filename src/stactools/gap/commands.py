@@ -72,7 +72,7 @@ def create_gap_command(cli):
         items = []
         for tif_path in (os.path.join(tile_directory, file_name)
                          for file_name in os.listdir(tile_directory)):
-            item = metadata.create_item(tif_path)
+            item = metadata.create_item(tif_href=tif_path)
             items.append(item)
         extent = Extent.from_items(items)
         collection = Collection(id=os.path.splitext(

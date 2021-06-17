@@ -14,4 +14,7 @@ def create_item(xml_href: str, tif_href: Optional[str] = None) -> Item:
     """
     metadata = Metadata.from_href(xml_href)
     id = os.path.splitext(os.path.basename(xml_href))[0]
-    return metadata.create_item(id, tif_href)
+    if tif_href:
+        return metadata.create_item(tif_href=tif_href)
+    else:
+        return metadata.create_item(id=id)

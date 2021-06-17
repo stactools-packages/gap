@@ -3,16 +3,17 @@ import os.path
 from tempfile import TemporaryDirectory
 
 import pystac
-from pystac import SpatialExtent, TemporalExtent
+from pystac import TemporalExtent
 import rasterio
 
 from stactools.gap.commands import create_gap_command
 from stactools.gap.constants import PROVIDERS
 from stactools.testing import CliTestCase
 from tests import test_data
+from tests.utils import StactoolsTestCase
 
 
-class CommandsTest(CliTestCase):
+class CommandsTest(CliTestCase, StactoolsTestCase):
     def create_subcommand_functions(self):
         return [create_gap_command]
 
@@ -67,10 +68,13 @@ class CommandsTest(CliTestCase):
                 ["land cover", "vegetation", "ecology", "wildlife habitat"])
             self.assertEqual(collection.license, "proprietary")
             self.assertEqual(collection.providers, PROVIDERS)
-            self.assertEqual(
-                collection.extent.spatial.bboxes,
-                SpatialExtent([-128.446443, 22.0670194, -64.761475,
-                               52.496415]).bboxes)
+            expected_bbox = [
+                -110.00025443243528, 29.359168172694346, -99.94710283198935,
+                40.69658382856684
+            ]
+            self.assertListsAreClose(collection.extent.spatial.bboxes[0],
+                                     expected_bbox,
+                                     abs_tol=1e-4)
             self.assertEqual(
                 collection.extent.temporal.intervals,
                 TemporalExtent([

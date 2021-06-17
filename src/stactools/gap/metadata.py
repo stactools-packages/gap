@@ -53,14 +53,17 @@ class Metadata:
         self.description = xml.findtext("./idinfo/descript/abstract")
         self.title = xml.findtext("./idinfo/citation/citeinfo/title")
 
-    def create_item(self, id: str, tif_href: Optional[str] = None) -> Item:
+    def create_item(self,
+                    id: Optional[str] = None,
+                    tif_href: Optional[str] = None) -> Item:
         """Creates a PySTAC Item from these metadata.
 
         Optionally uses the provided tif for bounds and projection information.
         """
         projection_properties = {}
         if tif_href:
-            id = os.path.splitext(os.path.basename(tif_href))[0]
+            if not id:
+                id = os.path.splitext(os.path.basename(tif_href))[0]
             with rasterio.open(tif_href) as dataset:
                 source_crs = dataset.crs
                 source_bbox = dataset.bounds
@@ -75,9 +78,13 @@ class Metadata:
                 "shape": source_shape,
                 "transform": source_transform,
             }
-        else:
+        elif id:
             geometry = self._geometry
             bbox = self._bbox
+        else:
+            raise Exception(
+                "Either id or tif_href must be provided to create an item from the metadata."
+            )
         item = Item(id=id,
                     geometry=geometry,
                     bbox=bbox,
