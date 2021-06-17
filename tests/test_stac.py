@@ -1,5 +1,6 @@
 import datetime
 
+from pystac import MediaType
 from pystac.extensions.projection import ProjectionExtension
 from pyproj import CRS
 
@@ -46,10 +47,10 @@ class StacTest(StactoolsTestCase):
     def test_create_item_with_tif(self):
         infile = test_data.get_path(
             "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
-        tif = test_data.get_path(
+        tif_path = test_data.get_path(
             "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
         )
-        item = create_item(infile, tif)
+        item = create_item(infile, tif_path)
         self.assertEqual(
             item.id, "gap_landfire_nationalterrestrialecosystems2011_subset")
         self.assertIsNotNone(item.geometry)
@@ -68,4 +69,11 @@ class StacTest(StactoolsTestCase):
         self.assertEqual(projection.transform, [
             10000.0, 0.0, -1180455.0, 0.0, -10000.0, 1974105.0, 0.0, 0.0, 1.0
         ])
+
+        tif = item.assets["data"]
+        self.assertEqual(tif.href, tif_path)
+        self.assertEqual(tif.title, "GeoTIFF data")
+        self.assertEqual(tif.media_type, MediaType.COG)
+        self.assertEqual(tif.roles, ["data"])
+
         item.validate()

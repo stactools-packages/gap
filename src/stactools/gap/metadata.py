@@ -4,7 +4,7 @@ from typing import Optional
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
-from pystac import Item
+from pystac import Item, Asset, MediaType
 from pystac.extensions.projection import ProjectionExtension
 import rasterio
 from shapely.geometry import box, mapping, shape
@@ -98,5 +98,13 @@ class Metadata:
             ProjectionExtension.add_to(item)
             projection = ProjectionExtension.ext(item)
             projection.apply(**projection_properties)
+
+        if tif_href:
+            item.add_asset(
+                "data",
+                Asset(href=tif_href,
+                      title="GeoTIFF data",
+                      media_type=MediaType.COG,
+                      roles=["data"]))
 
         return item
