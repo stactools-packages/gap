@@ -4,7 +4,7 @@ import click
 
 from pystac import Collection, Extent
 
-from stactools.gap.constants import DEFAULT_TILE_SIZE, DESCRIPTION, TITLE
+from stactools.gap.constants import DEFAULT_TILE_SIZE
 from stactools.gap.stac import create_item
 from stactools.gap.utils import tile
 
@@ -48,9 +48,10 @@ def create_gap_command(cli):
             items.append(item)
         extent = Extent.from_items(items)
         collection = Collection(id=id,
-                                description=DESCRIPTION,
+                                description="",
                                 extent=extent,
-                                title=TITLE)
+                                title="",
+                                datetime=None)
         collection.set_self_href(
             os.path.join(stac_directory, "collection.json"))
         collection.validate_all()
