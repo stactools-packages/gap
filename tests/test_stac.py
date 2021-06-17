@@ -21,8 +21,25 @@ class StacTest(unittest.TestCase):
         self.assertEqual(item.links, [])  # TODO add links
         self.assertEqual(item.assets, {})  # TODO add assets
         self.assertIsNone(item.collection_id)
-        self.assertEqual(item.datetime,
-                         datetime.datetime(2016, 5, 13, 0, 0, 0))
+        self.assertEqual(item.datetime, None)
+        self.assertEqual(
+            item.common_metadata.start_datetime,
+            datetime.datetime(2010,
+                              1,
+                              1,
+                              0,
+                              0,
+                              0,
+                              tzinfo=datetime.timezone.utc))
+        self.assertEqual(
+            item.common_metadata.end_datetime,
+            datetime.datetime(2011,
+                              12,
+                              31,
+                              0,
+                              0,
+                              0,
+                              tzinfo=datetime.timezone.utc))
         self.assertFalse(ProjectionExtension.has_extension(item))
         item.validate()
 

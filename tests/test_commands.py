@@ -1,7 +1,6 @@
 import datetime
 import os.path
 from tempfile import TemporaryDirectory
-import unittest
 
 import pystac
 from pystac import SpatialExtent, TemporalExtent
@@ -36,7 +35,6 @@ class CommandsTest(CliTestCase):
                     self.assertLessEqual(cols, 500001)
 
     def test_collection(self):
-        raise unittest.SkipTest
         tif = test_data.get_path(
             "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
         )
@@ -46,7 +44,7 @@ class CommandsTest(CliTestCase):
             cog_directory = os.path.join(directory, "cogs")
             stac_directory = os.path.join(directory, "stac")
             result = self.run_command([
-                "gap", "create-collection", "--tile-size", "500001", tif, xml,
+                "gap", "create-collection", "--tile-size", "500001", xml, tif,
                 cog_directory, stac_directory
             ])
             self.assertEqual(result.exit_code,
@@ -70,16 +68,27 @@ class CommandsTest(CliTestCase):
             self.assertEqual(collection.license, "proprietary")
             self.assertEqual(collection.providers, PROVIDERS)
             self.assertEqual(
-                collection.extent.spatial,
+                collection.extent.spatial.bboxes,
                 SpatialExtent([-128.446443, 22.0670194, -64.761475,
-                               52.496415]))
+                               52.496415]).bboxes)
             self.assertEqual(
-                collection.extent.temporal,
+                collection.extent.temporal.intervals,
                 TemporalExtent([
-                    datetime.datetime.date(2010, 1, 1),
-                    datetime.datetime.date(2011, 12, 31)
-                ]))
-            self.assertEqual(collection.summaries, {})
-            self.assertEqual(collection.links, [])
-            self.assertEqual(collection.assets, [])
+                    datetime.datetime(2010,
+                                      1,
+                                      1,
+                                      0,
+                                      0,
+                                      0,
+                                      tzinfo=datetime.timezone.utc),
+                    datetime.datetime(2011,
+                                      12,
+                                      31,
+                                      0,
+                                      0,
+                                      0,
+                                      tzinfo=datetime.timezone.utc)
+                ]).intervals)
+            self.assertTrue(collection.summaries.is_empty())
+            self.assertEqual(collection.assets, {})
             collection.validate_all()
