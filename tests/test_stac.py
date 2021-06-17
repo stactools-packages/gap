@@ -1,6 +1,9 @@
 import datetime
 import unittest
 
+from pystac.extensions.projection import ProjectionExtension
+from pyproj import CRS
+
 from stactools.gap.stac import create_item
 from tests import test_data
 
@@ -20,7 +23,7 @@ class StacTest(unittest.TestCase):
         self.assertIsNone(item.collection_id)
         self.assertEqual(item.datetime,
                          datetime.datetime(2016, 5, 13, 0, 0, 0))
-        # TODO check proj extension
+        self.assertFalse(ProjectionExtension.has_extension(item))
         item.validate()
 
     def test_create_item_with_tif(self):
@@ -37,4 +40,10 @@ class StacTest(unittest.TestCase):
             -110.00025443243528, 29.359168172694346, -99.94710283198935,
             40.69658382856684
         ])
+        self.assertTrue(ProjectionExtension.has_extension(item))
+        projection = ProjectionExtension.ext(item)
+        self.assertIsNone(projection.epsg)
+        with open(test_data.get_path("data-files/srs.wkt2")) as f:
+            source_srs = CRS.from_wkt(f.read())
+        self.assertEqual(CRS.from_wkt(projection.wkt2), source_srs)
         item.validate()

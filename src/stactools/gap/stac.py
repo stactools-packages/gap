@@ -2,6 +2,7 @@ import os.path
 from typing import Optional
 
 from pystac import Item
+from pystac.extensions.projection import ProjectionExtension
 import rasterio
 from shapely.geometry import mapping, box, shape
 
@@ -17,6 +18,7 @@ def create_item(xml_href: str, tif_href: Optional[str] = None) -> Item:
     used to set the bounds instead of the XML metadata.
     """
     metadata = Metadata.from_href(xml_href)
+    projection_properties = {}
     if tif_href:
         id = os.path.splitext(os.path.basename(tif_href))[0]
         with rasterio.open(tif_href) as dataset:
@@ -25,6 +27,10 @@ def create_item(xml_href: str, tif_href: Optional[str] = None) -> Item:
             source_geometry = mapping(box(*source_bbox))
         geometry = reproject_geom(source_crs, "EPSG:4326", source_geometry)
         bbox = list(shape(geometry).bounds)
+        projection_properties = {
+            "epsg": None,
+            "wkt2": source_crs.to_wkt(),
+        }
     else:
         id = os.path.splitext(os.path.basename(xml_href))[0]
         geometry = metadata.geometry
@@ -34,4 +40,10 @@ def create_item(xml_href: str, tif_href: Optional[str] = None) -> Item:
                 bbox=bbox,
                 properties={},
                 datetime=metadata.datetime)
+
+    if projection_properties:
+        ProjectionExtension.add_to(item)
+        projection = ProjectionExtension.ext(item)
+        projection.apply(**projection_properties)
+
     return item
