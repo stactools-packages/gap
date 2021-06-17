@@ -34,18 +34,18 @@ class CommandsTest(CliTestCase):
                     self.assertLessEqual(rows, 500001)
                     self.assertLessEqual(cols, 500001)
 
-    def test_collection(self):
+    def test_create_collection(self):
         tif = test_data.get_path(
             "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
         )
         xml = test_data.get_path(
             "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
         with TemporaryDirectory() as directory:
-            cog_directory = os.path.join(directory, "cogs")
+            tile_directory = os.path.join(directory, "tiles")
             stac_directory = os.path.join(directory, "stac")
             result = self.run_command([
-                "gap", "create-collection", "--tile-size", "500001", xml, tif,
-                cog_directory, stac_directory
+                "gap", "create-collection", "--tile-size", "500001",
+                "--tile-source", tif, xml, tile_directory, stac_directory
             ])
             self.assertEqual(result.exit_code,
                              0,
@@ -92,3 +92,21 @@ class CommandsTest(CliTestCase):
             self.assertTrue(collection.summaries.is_empty())
             self.assertEqual(collection.assets, {})
             collection.validate_all()
+
+            stac_directory_2 = os.path.join(directory, "stac2")
+            result = self.run_command([
+                "gap", "create-collection", "--tile-size", "500001", xml,
+                tile_directory, stac_directory_2
+            ])
+            collection_2 = pystac.read_file(
+                os.path.join(stac_directory_2, "collection.json"))
+            self.assertEqual(collection_2.id, collection.id)
+            self.assertEqual(collection_2.title, collection.title)
+            self.assertEqual(collection_2.description, collection.description)
+            self.assertEqual(collection_2.keywords, collection.keywords)
+            self.assertEqual(collection_2.license, collection.license)
+            self.assertEqual(collection_2.providers, collection.providers)
+            self.assertEqual(collection_2.extent.spatial.bboxes,
+                             collection.extent.spatial.bboxes)
+            self.assertEqual(collection_2.extent.temporal.intervals,
+                             collection.extent.temporal.intervals)
