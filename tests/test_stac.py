@@ -1,4 +1,5 @@
 import datetime
+import math
 import unittest
 
 from pystac.extensions.projection import ProjectionExtension
@@ -53,10 +54,14 @@ class StacTest(unittest.TestCase):
         self.assertEqual(
             item.id, "gap_landfire_nationalterrestrialecosystems2011_subset")
         self.assertIsNotNone(item.geometry)
-        self.assertEqual(item.bbox, [
+        expected_bbox = [
             -110.00025443243528, 29.359168172694346, -99.94710283198935,
             40.69658382856684
-        ])
+        ]
+        for actual, expected in zip(item.bbox, expected_bbox):
+            self.assertTrue(math.isclose(actual, expected, abs_tol=1e-7), (
+                f"Bounding boxes are not close enough: {actual} != {expected} "
+                f"(comparing {item.bbox} and {expected_bbox})"))
         self.assertTrue(ProjectionExtension.has_extension(item))
         projection = ProjectionExtension.ext(item)
         self.assertIsNone(projection.epsg)

@@ -1,4 +1,5 @@
 import os
+import sys
 
 import click
 
@@ -39,6 +40,11 @@ def create_gap_command(cli):
 
         Will create the COG and STAC directories if needed.
         """
+        if os.path.splitext(xml_href)[1] != ".xml":
+            print(
+                f"{xml_href} does not look like an xml file, make sure it has an 'xml' extension",
+                file=sys.stderr)
+            sys.exit(1)
         metadata = Metadata.from_href(xml_href)
         os.makedirs(cog_directory, exist_ok=True)
         tile(tif_href, cog_directory, tile_size)
