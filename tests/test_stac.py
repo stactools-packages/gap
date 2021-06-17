@@ -59,7 +59,7 @@ class StacTest(unittest.TestCase):
             40.69658382856684
         ]
         for actual, expected in zip(item.bbox, expected_bbox):
-            self.assertTrue(math.isclose(actual, expected, abs_tol=1e-7), (
+            self.assertTrue(math.isclose(actual, expected, abs_tol=1e-4), (
                 f"Bounding boxes are not close enough: {actual} != {expected} "
                 f"(comparing {item.bbox} and {expected_bbox})"))
         self.assertTrue(ProjectionExtension.has_extension(item))
