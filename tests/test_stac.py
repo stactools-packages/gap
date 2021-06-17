@@ -11,7 +11,7 @@ from tests import test_data
 class StacTest(unittest.TestCase):
     def test_create_item(self):
         infile = test_data.get_path(
-            "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.XML")
+            "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
         item = create_item(infile)
         self.assertEqual(item.id,
                          "GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011")
@@ -28,7 +28,7 @@ class StacTest(unittest.TestCase):
 
     def test_create_item_with_tif(self):
         infile = test_data.get_path(
-            "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.XML")
+            "data-files/GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
         tif = test_data.get_path(
             "data-files/gap_landfire_nationalterrestrialecosystems2011_subset.tif"
         )
