@@ -25,11 +25,15 @@ def create_item(xml_href: str, tif_href: Optional[str] = None) -> Item:
             source_crs = dataset.crs
             source_bbox = dataset.bounds
             source_geometry = mapping(box(*source_bbox))
+            source_shape = [dataset.height, dataset.width]
+            source_transform = list(dataset.transform)
         geometry = reproject_geom(source_crs, "EPSG:4326", source_geometry)
         bbox = list(shape(geometry).bounds)
         projection_properties = {
             "epsg": None,
             "wkt2": source_crs.to_wkt(),
+            "shape": source_shape,
+            "transform": source_transform,
         }
     else:
         id = os.path.splitext(os.path.basename(xml_href))[0]

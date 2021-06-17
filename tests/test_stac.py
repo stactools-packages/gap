@@ -46,4 +46,8 @@ class StacTest(unittest.TestCase):
         with open(test_data.get_path("data-files/srs.wkt2")) as f:
             source_srs = CRS.from_wkt(f.read())
         self.assertEqual(CRS.from_wkt(projection.wkt2), source_srs)
+        self.assertEqual(projection.shape, [120, 80])
+        self.assertEqual(projection.transform, [
+            10000.0, 0.0, -1180455.0, 0.0, -10000.0, 1974105.0, 0.0, 0.0, 1.0
+        ])
         item.validate()
