@@ -7,7 +7,6 @@ from pystac import TemporalExtent
 import rasterio
 
 from stactools.gap.commands import create_gap_command
-from stactools.gap.constants import PROVIDERS
 from stactools.testing import CliTestCase
 from tests import test_data
 from tests.utils import StactoolsTestCase
@@ -67,7 +66,7 @@ class CommandsTest(CliTestCase, StactoolsTestCase):
                 collection.keywords,
                 ["land cover", "vegetation", "ecology", "wildlife habitat"])
             self.assertEqual(collection.license, "proprietary")
-            self.assertEqual(collection.providers, PROVIDERS)
+            self.assertTrue(collection.providers)
             expected_bbox = [
                 -110.00025443243528, 29.359168172694346, -99.94710283198935,
                 40.69658382856684
@@ -109,7 +108,6 @@ class CommandsTest(CliTestCase, StactoolsTestCase):
             self.assertEqual(collection_2.description, collection.description)
             self.assertEqual(collection_2.keywords, collection.keywords)
             self.assertEqual(collection_2.license, collection.license)
-            self.assertEqual(collection_2.providers, collection.providers)
             self.assertEqual(collection_2.extent.spatial.bboxes,
                              collection.extent.spatial.bboxes)
             self.assertEqual(collection_2.extent.temporal.intervals,
