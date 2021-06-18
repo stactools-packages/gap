@@ -71,7 +71,8 @@ def create_gap_command(cli):
         metadata = Metadata.from_href(xml_href)
         items = []
         for tif_path in (os.path.join(tile_directory, file_name)
-                         for file_name in os.listdir(tile_directory)):
+                         for file_name in os.listdir(tile_directory)
+                         if os.path.splitext(file_name)[1] == ".tif"):
             item = metadata.create_item(tif_href=tif_path)
             items.append(item)
         extent = Extent.from_items(items)
