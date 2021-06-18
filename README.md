@@ -1,15 +1,42 @@
 # stactools-gap
 
-Template repostitory for [stactools](https://github.com/stac-utils/stactools) packages.
+[![CI](https://github.com/stactools-packages/gap/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/stactools-packages/gap/actions/workflows/continuous-integration.yml)
 
-## How to use
+[stactools](https://github.com/stac-utils/stactools) package for the [USGS Gap Analysis Project](https://www.usgs.gov/core-science-systems/science-analytics-and-synthesis/gap).
 
-1. Clone this repository and name it `{NAME}`, where `NAME` is your package name.
-   This name should be short, memorable, and a valid Python package name (i.e. it shouldn't start with a number, etc).
-2. Update `setup.cfg` with your package name, description, and such.
-3. Rename `src/stactools/package` to `src/stactools/{NAME}`.
-4. Rewrite this README to provide information about how to use your package.
-5. Update the LICENSE with your company's information (or whomever holds the copyright).
-6. Update the environment name in `environment.yml`.
-7. Update the environment variables in `.github/workflows/release.yml` to the appropriate values to publish for your organization.
-8. Update all scripts in the `docker` directory to refer to `stactools-{NAME}` and `stactools-{NAME}-dev`.
+## Installation
+
+Latest stable version:
+
+```bash
+pip install stactools-gap
+```
+
+Latest development version:
+
+```bash
+pip install git+https://github.com/stactools-packages/gap
+```
+
+## Usage
+
+GAP data comes as big rasters, either TIFFs or IMG files.
+You can tile these large rasters and create a STAC Collection for those tiles using `create-collection`:
+
+```bash
+stac gap create-collection --tile-source gap.tif gap.xml tile-directory stac-directory
+```
+
+If you just want to create tiles, use the `tile` command:
+
+```bash
+stac gap tile gap.tif tile-directory
+```
+
+If you already have tiles directory, you can skip the tiling step by omitting the `--tile-source` argument to `create-collection`:
+
+```bash
+stac gap create-collection gap.xml tile-directory stac-directory
+```
+
+For complete listing of options, use `stac gap --help`.
