@@ -10,7 +10,7 @@ from pystac.extensions.projection import ProjectionExtension
 import rasterio
 from shapely.geometry import box, mapping, shape
 
-from stactools.core.io import read_text
+from stactools.core.io import ReadHrefModifier, read_text
 from stactools.core.projection import reproject_geom
 
 from stactools.gap.utils import is_conus
@@ -31,8 +31,11 @@ class Metadata:
         return cls(xml)
 
     @classmethod
-    def from_raster(cls, path: str) -> "Metadata":
-        if is_conus(path):
+    def from_raster(cls,
+                    path: str,
+                    read_href_modifier: Optional[ReadHrefModifier] = None
+                    ) -> "Metadata":
+        if is_conus(path, read_href_modifier=read_href_modifier):
             return Metadata.from_resource(
                 "GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
         else:

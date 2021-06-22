@@ -1,8 +1,10 @@
 import os.path
+from typing import Optional
 
 import rasterio
 from rasterio.warp import transform_bounds
 from shapely.geometry import box
+from stactools.core.io import ReadHrefModifier
 
 from stactools.core.utils.convert import cogify
 from stactools.gap.constants import DEFAULT_TILE_SIZE
@@ -54,8 +56,11 @@ class Tile:
         return cogify(infile, outfile, extra_args=extra_args)
 
 
-def is_conus(href: str) -> bool:
+def is_conus(href: str,
+             read_href_modifier: Optional[ReadHrefModifier] = None) -> bool:
     """Returns true if the raster is inside the Continental United States."""
+    if read_href_modifier:
+        href = read_href_modifier(href)
     with rasterio.open(href) as dataset:
         bounds = transform_bounds(dataset.crs, "EPSG:4326", *dataset.bounds)
         return box(*CONUS_BOUNDS).contains(box(*bounds))
