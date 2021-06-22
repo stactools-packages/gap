@@ -110,6 +110,7 @@ class Metadata:
             raise Exception(
                 "Either id or tif_href must be provided to create an item from the metadata."
             )
+
         item = Item(id=id,
                     geometry=geometry,
                     bbox=bbox,
@@ -117,7 +118,7 @@ class Metadata:
                         "start_datetime": self._start_datetime.isoformat(),
                         "end_datetime": self._end_datetime.isoformat(),
                     },
-                    datetime=None)
+                    datetime=self._end_datetime)
 
         if projection_properties:
             ProjectionExtension.add_to(item)

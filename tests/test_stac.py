@@ -22,7 +22,15 @@ class StacTest(StactoolsTestCase):
         self.assertEqual(item.links, [])  # TODO add links
         self.assertEqual(item.assets, {})  # TODO add assets
         self.assertIsNone(item.collection_id)
-        self.assertEqual(item.datetime, None)
+        self.assertEqual(
+            item.datetime,
+            datetime.datetime(2011,
+                              12,
+                              31,
+                              0,
+                              0,
+                              0,
+                              tzinfo=datetime.timezone.utc))
         self.assertEqual(
             item.common_metadata.start_datetime,
             datetime.datetime(2010,
