@@ -25,7 +25,7 @@ def create_gap_command(cli):
     @click.argument("outdir")
     @click.option("-s", "--size", default=DEFAULT_TILE_SIZE)
     def tile_command(infile, outdir, size):
-        """Tiles the input file to the MGRS grid.
+        """Tiles the input file to a grid.
 
         The source GAP data are huge GeoTIFFS, so we tile the geotiffs.
         """

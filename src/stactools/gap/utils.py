@@ -7,7 +7,7 @@ from stactools.gap.constants import DEFAULT_TILE_SIZE
 
 
 def tile(infile, outdir, size=DEFAULT_TILE_SIZE):
-    """Tiles the given input to the MGRS grid."""
+    """Tiles the given input to a grid."""
     with rasterio.open(infile) as dataset:
         tiles = create_tiles(*dataset.bounds, size)
     for tile in tiles:
