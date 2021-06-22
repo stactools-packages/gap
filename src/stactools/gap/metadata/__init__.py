@@ -1,5 +1,6 @@
 import datetime
 import os.path
+import pkg_resources
 from typing import Optional
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
@@ -11,6 +12,8 @@ from shapely.geometry import box, mapping, shape
 
 from stactools.core.io import read_text
 from stactools.core.projection import reproject_geom
+
+from stactools.gap.utils import is_conus
 
 
 class Metadata:
@@ -26,6 +29,19 @@ class Metadata:
         """Reads metadata from an XML string."""
         xml = ElementTree.fromstring(text)
         return cls(xml)
+
+    @classmethod
+    def from_raster(cls, path: str) -> "Metadata":
+        if is_conus(path):
+            return Metadata.from_resource(
+                "GAP_LANDFIRE_National_Terrestrial_Ecosystems_2011.xml")
+        else:
+            return Metadata.from_resource("natgaplandcov_v2_metadata.xml")
+
+    @classmethod
+    def from_resource(cls, resource: str) -> "Metadata":
+        return Metadata.from_text(
+            pkg_resources.resource_string(__name__, resource))
 
     def __init__(self, xml: Element) -> None:
         west = float(xml.findtext("./idinfo/spdom/bounding/westbc"))
@@ -51,7 +67,7 @@ class Metadata:
                                                0,
                                                tzinfo=datetime.timezone.utc)
         self.description = xml.findtext("./idinfo/descript/abstract")
-        self.title = xml.findtext("./idinfo/citation/citeinfo/title")
+        self.title = xml.findtext("./idinfo/citation/citeinfo/title").strip()
 
     def create_item(self,
                     id: Optional[str] = None,
