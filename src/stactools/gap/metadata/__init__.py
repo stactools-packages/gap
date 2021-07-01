@@ -117,9 +117,6 @@ class Metadata:
                     properties={
                         "start_datetime": self._start_datetime.isoformat(),
                         "end_datetime": self._end_datetime.isoformat(),
-                        "processing:software": {
-                            "stactools-gap": pkg_resources.require("stactools-gap")[0].version,
-                        }
                     },
                     datetime=self._end_datetime)
 
