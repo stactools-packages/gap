@@ -4,6 +4,7 @@ from pystac import MediaType
 from pystac.extensions.projection import ProjectionExtension
 from pyproj import CRS
 
+from stactools.gap import __version__
 from stactools.gap.stac import create_item
 from tests import test_data
 from tests.utils import StactoolsTestCase
@@ -50,6 +51,11 @@ class StacTest(StactoolsTestCase):
                               0,
                               tzinfo=datetime.timezone.utc))
         self.assertFalse(ProjectionExtension.has_extension(item))
+        self.assertTrue(
+            "https://stac-extensions.github.io/processing/v1.0.0/schema.json"
+            in item.stac_extensions)
+        self.assertDictEqual(item.properties["processing:software"],
+                             {"stactools-gap": __version__})
         item.validate()
 
     def test_create_item_with_tif(self):

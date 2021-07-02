@@ -119,6 +119,11 @@ class Metadata:
                         "end_datetime": self._end_datetime.isoformat(),
                     },
                     datetime=self._end_datetime)
+        item.stac_extensions.append(
+            "https://stac-extensions.github.io/processing/v1.0.0/schema.json")
+        item.properties["processing:software"] = {
+            "stactools-gap": pkg_resources.require("stactools-gap")[0].version
+        }
 
         if projection_properties:
             ProjectionExtension.add_to(item)
